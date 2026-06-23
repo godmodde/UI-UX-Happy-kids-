@@ -30,7 +30,8 @@ function ArrowUpRight() {
 export function SkillsCarousel() {
   const t = useT();
   const trackRef = useRef<HTMLDivElement>(null);
-  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false, lastX: 0, lastT: 0, vel: 0 });
+  const rafRef = useRef(0); // id анимации инерции
   const [progress, setProgress] = useState(0); // заполнение полоски прогресса, 0..1
   const [info, setInfo] = useState<Item | null>(null);
 
@@ -49,6 +50,9 @@ export function SkillsCarousel() {
     };
   }, [info]);
 
+  // Остановить инерцию при размонтировании.
+  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
+
   function cards(): HTMLElement[] {
     const track = trackRef.current;
     if (!track) return [];
@@ -64,6 +68,8 @@ export function SkillsCarousel() {
     const track = trackRef.current;
     const cs = cards();
     if (!track || cs.length === 0) return;
+    cancelAnimationFrame(rafRef.current); // прервать инерцию, если катится
+    track.style.scrollBehavior = "";
     const stride =
       cs.length > 1
         ? cs[1].getBoundingClientRect().left - cs[0].getBoundingClientRect().left
@@ -71,23 +77,35 @@ export function SkillsCarousel() {
     track.scrollBy({ left: dir * stride, behavior: smooth() as ScrollBehavior });
   }
 
-  // По отпусканию драга доводим к ближайшей карточке.
-  function snapNearest() {
+  function restoreSmooth() {
     const track = trackRef.current;
-    const cs = cards();
-    if (!track || cs.length === 0) return;
-    const left = track.getBoundingClientRect().left;
-    let best = cs[0];
-    let bestDist = Infinity;
-    for (const c of cs) {
-      const d = Math.abs(c.getBoundingClientRect().left - left);
-      if (d < bestDist) {
-        bestDist = d;
-        best = c;
-      }
+    if (track) track.style.scrollBehavior = "";
+  }
+
+  // Свободная инерция после отпускания: продолжаем катить с затуханием,
+  // без привязки к карточкам. v0 — скорость курсора (px/мс) в момент отпускания.
+  function startMomentum(v0: number) {
+    const track = trackRef.current;
+    if (!track) return;
+    const max = track.scrollWidth - track.clientWidth;
+    let v = -v0; // scrollLeft растёт в сторону, противоположную движению курсора
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || Math.abs(v) < 0.02) {
+      restoreSmooth();
+      return;
     }
-    const delta = best.getBoundingClientRect().left - left;
-    track.scrollBy({ left: delta, behavior: smooth() as ScrollBehavior });
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 50);
+      last = now;
+      v *= Math.pow(0.93, dt / 16); // трение
+      let next = track.scrollLeft + v * dt;
+      if (next <= 0) { next = 0; v = 0; }
+      else if (next >= max) { next = max; v = 0; }
+      track.scrollLeft = next;
+      if (Math.abs(v) > 0.02) rafRef.current = requestAnimationFrame(tick);
+      else restoreSmooth();
+    };
+    rafRef.current = requestAnimationFrame(tick);
   }
 
   // Полоска прогресса = доля прокрутки.
@@ -105,10 +123,10 @@ export function SkillsCarousel() {
     if (e.pointerType !== "mouse" || e.button !== 0) return;
     const track = trackRef.current;
     if (!track) return;
-    drag.current = { down: true, startX: e.clientX, startLeft: track.scrollLeft, moved: false };
-    // Во время drag — никаких анимаций: snap и smooth-scroll выключаем, чтобы
-    // дорожка следовала за курсором 1:1, без рывков-«догонялок».
-    track.style.scrollSnapType = "none";
+    cancelAnimationFrame(rafRef.current); // прервать инерцию, если ещё катится
+    const now = performance.now();
+    drag.current = { down: true, startX: e.clientX, startLeft: track.scrollLeft, moved: false, lastX: e.clientX, lastT: now, vel: 0 };
+    // Во время drag — мгновенное следование за курсором (без smooth-анимации).
     track.style.scrollBehavior = "auto";
   }
   function onPointerMove(e: React.PointerEvent) {
@@ -124,18 +142,21 @@ export function SkillsCarousel() {
         /* захват не критичен — продолжаем тащить */
       }
     }
+    // Скорость для инерции (сглаженная).
+    const now = performance.now();
+    const dt = now - d.lastT;
+    if (dt > 0) d.vel = 0.8 * ((e.clientX - d.lastX) / dt) + 0.2 * d.vel;
+    d.lastX = e.clientX;
+    d.lastT = now;
     track.scrollLeft = d.startLeft - dx;
   }
   function endDrag() {
-    const track = trackRef.current;
     const d = drag.current;
     if (!d.down) return;
     d.down = false;
-    if (track) {
-      track.style.scrollSnapType = "";
-      track.style.scrollBehavior = ""; // вернуть плавность для стрелок/снапа
-    }
-    if (d.moved) snapNearest(); // плавно довести к ближайшей карточке
+    // Свободно — без привязки к карточкам: запускаем инерцию (она вернёт smooth).
+    if (d.moved) startMomentum(d.vel);
+    else restoreSmooth();
   }
 
   function showInfo(it: Item) {
