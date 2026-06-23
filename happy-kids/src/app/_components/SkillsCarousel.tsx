@@ -27,8 +27,6 @@ function ArrowUpRight() {
   );
 }
 
-const PAGES = 2; // слайдер листается двумя страницами
-
 export function SkillsCarousel() {
   const t = useT();
   const trackRef = useRef<HTMLDivElement>(null);
@@ -50,22 +48,39 @@ export function SkillsCarousel() {
     };
   }, [info]);
 
-  function maxScroll() {
+  function cards(): HTMLElement[] {
     const track = trackRef.current;
-    return track ? track.scrollWidth - track.clientWidth : 0;
+    if (!track) return [];
+    return Array.from(track.children) as HTMLElement[];
   }
 
+  // Плавно листаем по одной карточке: выравниваем её левый край с краем дорожки.
   function scrollToIndex(i: number) {
     const track = trackRef.current;
-    if (!track) return;
-    const n = Math.max(0, Math.min(i, PAGES - 1));
-    track.scrollTo({ left: maxScroll() * (n / (PAGES - 1)), behavior: "smooth" });
+    const cs = cards();
+    if (!track || cs.length === 0) return;
+    const n = Math.max(0, Math.min(i, cs.length - 1));
+    const delta = cs[n].getBoundingClientRect().left - track.getBoundingClientRect().left;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.scrollTo({ left: track.scrollLeft + delta, behavior: reduce ? "auto" : "smooth" });
   }
 
+  // Активна карточка, чей левый край ближе всего к левому краю дорожки.
   function onScroll() {
-    const m = maxScroll();
-    if (!trackRef.current || m <= 0) return setActive(0);
-    setActive(Math.round((trackRef.current.scrollLeft / m) * (PAGES - 1)));
+    const track = trackRef.current;
+    const cs = cards();
+    if (!track || cs.length === 0) return;
+    const left = track.getBoundingClientRect().left;
+    let best = 0;
+    let bestDist = Infinity;
+    cs.forEach((c, i) => {
+      const d = Math.abs(c.getBoundingClientRect().left - left);
+      if (d < bestDist) {
+        bestDist = d;
+        best = i;
+      }
+    });
+    setActive(best);
   }
 
   function showInfo(it: Item) {
@@ -109,8 +124,8 @@ export function SkillsCarousel() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div className={styles.dots} aria-label="Страницы">
-            {Array.from({ length: PAGES }).map((_, i) => (
-              <button key={i} type="button" className={`${styles.dot} ${i === active ? styles.dotActive : ""}`} onClick={() => scrollToIndex(i)} aria-label={`Страница ${i + 1}`} aria-current={i === active} />
+            {items.map((it, i) => (
+              <button key={it.key} type="button" className={`${styles.dot} ${i === active ? styles.dotActive : ""}`} onClick={() => scrollToIndex(i)} aria-label={`Карточка ${i + 1}`} aria-current={i === active} />
             ))}
           </div>
           <button type="button" className={styles.svcNav} onClick={() => scrollToIndex(active + 1)} aria-label="Вперёд">
