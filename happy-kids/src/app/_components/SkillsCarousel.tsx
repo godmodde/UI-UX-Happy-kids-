@@ -99,9 +99,13 @@ export function SkillsCarousel() {
     const d = drag.current;
     if (!track || !d.down) return;
     const dx = e.clientX - d.startX;
-    if (Math.abs(dx) > 4) {
+    if (!d.moved && Math.abs(dx) > 4) {
       d.moved = true;
-      track.setPointerCapture?.(e.pointerId);
+      try {
+        track.setPointerCapture(e.pointerId);
+      } catch {
+        /* захват не критичен — продолжаем тащить */
+      }
     }
     track.scrollLeft = d.startLeft - dx;
   }
