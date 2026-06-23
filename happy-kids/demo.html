@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy Kids — конструкторы, которые развивают мышление</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --primary:#FF7A33;--primary600:#E85F1A;--primary-tint:#FFE7D6;
+    --complement:#2E7DF6;--complement600:#1F63CF;--complement-tint:#DCEBFF;
+    --warm:#FFC24D;--success:#22C55E;
+    --bg:#FFF8F2;--surface:#FFFFFF;--ink:#22252D;--muted:#6B7280;--border:#F0E3D8;
+    --r-sm:8px;--r-md:16px;--r-lg:24px;--r-pill:999px;
+    --shadow-sm:0 2px 8px rgba(34,37,45,.06);--shadow-md:0 8px 24px rgba(34,37,45,.08);--shadow-lg:0 16px 40px rgba(34,37,45,.10);
+    --fh:'Comfortaa',system-ui,sans-serif;--fb:'Nunito Sans',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--fb);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.55}
+  h1,h2,h3,h4{font-family:var(--fh);font-weight:700;line-height:1.15} /* заголовки жирные */
+  a{color:var(--complement);text-decoration:none}
+  .container{max-width:1160px;margin-inline:auto;padding-inline:24px}
+  .section{padding-block:64px}
+  .sec-head{margin-bottom:32px}
+  .sec-head p{color:var(--muted);margin-top:8px}
+  .sec-head .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+  .link{color:var(--complement);font-weight:600}
+  h2{font-size:clamp(26px,3.4vw,34px)}
+  .btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 24px;border:2px solid transparent;border-radius:var(--r-pill);font-family:var(--fh);font-weight:600;font-size:16px;cursor:pointer;transition:.15s}
+  .btn-primary{background:var(--primary);color:#3a1c08}.btn-primary:hover{background:var(--primary600);color:#fff}
+  .btn-sm{min-height:38px;padding:0 16px;font-size:14px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:var(--complement-tint);color:var(--complement600);border-radius:var(--r-pill);font-weight:700;font-size:14px}
+
+  header{position:sticky;top:0;z-index:50;background:rgba(255,248,242,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  .hdr{display:flex;align-items:center;gap:24px;height:72px}
+  .logo{display:inline-flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:700;font-size:22px;color:var(--ink)}
+  nav.main{display:flex;gap:24px;margin-left:16px}
+  nav.main a{color:var(--ink);font-weight:600}nav.main a:hover{color:var(--primary600)}
+  .hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .toggle{display:inline-flex;border:1px solid var(--border);border-radius:var(--r-pill);overflow:hidden}
+  .toggle button{min-width:40px;height:36px;padding-inline:12px;background:transparent;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer;border:none}
+  .toggle button[aria-pressed="true"]{background:var(--primary-tint);color:var(--primary600)}
+  .icon-btn{width:44px;height:44px;display:grid;place-items:center;border:none;background:transparent;border-radius:var(--r-pill);color:var(--ink);cursor:pointer;position:relative}
+  .icon-btn:hover{background:var(--primary-tint)}
+
+  .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:64px}
+  .hero h1{font-size:clamp(34px,5vw,52px);margin:16px 0 12px}
+  .hero h1 .accent{color:var(--primary)}
+  .hero .sub{font-size:18px;color:var(--muted);max-width:48ch}
+  .hero-ctas{margin-top:24px}
+  .hero-art{aspect-ratio:1/1;border-radius:var(--r-lg);background:radial-gradient(120% 120% at 80% 10%,var(--primary-tint),transparent 55%),var(--complement-tint);display:grid;place-items:center;box-shadow:var(--shadow-lg);overflow:hidden}
+  .hero-art svg{width:72%;height:72%}
+  .hero-art picture,.hero-art img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .adv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .adv{display:flex;flex-direction:column;gap:12px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm)}
+  .adv-ic{width:52px;height:52px;display:grid;place-items:center;border-radius:var(--r-md);background:var(--primary-tint);color:var(--primary600)}
+  .adv h3{font-size:17px}.adv p{color:var(--muted);font-size:14px}
+  /* блок «коробка → готовая модель» */
+  .transform{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
+  .t-panel{position:relative;aspect-ratio:4/3;border-radius:var(--r-lg);border:1px solid var(--border);display:grid;place-items:center;overflow:hidden}
+  .t-panel svg{width:60%;height:60%;margin-top:-14px}
+  .t-box{background:#FFF3E6}.t-model{background:var(--complement-tint)}
+  .t-cap{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-family:var(--fh);font-weight:600;font-size:14px;color:var(--ink)}
+  .t-arrow{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--primary)}
+  .t-arrow-svg{animation:tSlide 1.4s ease-in-out infinite}
+  .t-arrow-label{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  @keyframes tSlide{0%,100%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+  @media (max-width:760px){.transform{grid-template-columns:1fr}.t-arrow{transform:rotate(90deg);padding-block:8px}}
+
+  .feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .feat{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:.15s}
+  .feat:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+  .feat-media{aspect-ratio:4/3;display:grid;place-items:center}.feat-media svg{width:64%;height:64%}
+  .feat-body{display:flex;flex-direction:column;gap:8px;padding:16px;flex:1}
+  .age{align-self:flex-start;padding:2px 10px;border-radius:var(--r-pill);background:var(--complement-tint);color:var(--complement600);font-size:12px;font-weight:700}
+  .feat-title{font-family:var(--fh);font-weight:600;font-size:17px}
+  .feat-desc{color:var(--muted);font-size:14px;flex:1}
+  .feat-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+  .price{font-family:var(--fh);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .step{display:flex;flex-direction:column;gap:12px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+  .step-no{width:44px;height:44px;display:grid;place-items:center;border-radius:var(--r-pill);background:var(--primary);color:#fff;font-family:var(--fh);font-weight:700;font-size:20px}
+  .step h3{font-size:18px}.step p{color:var(--muted);font-size:14px}
+
+  .band{background:var(--surface);border-block:1px solid var(--border)}
+  /* services-style карусель */
+  .svc-head{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:32px}
+  .svc-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--complement600);font-family:var(--fh);font-weight:700;font-size:14px;padding-bottom:6px;border-bottom:2px dashed var(--complement);width:max-content}
+  .svc-title{font-size:clamp(28px,4vw,44px);font-weight:700;line-height:1.08;margin-top:14px}
+  .browse{align-self:flex-end;display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border:1px solid var(--border);border-radius:var(--r-pill);font-family:var(--fh);font-weight:600;color:var(--ink);white-space:nowrap}
+  .browse:hover{border-color:var(--primary);color:var(--primary600)}
+  .svc-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:none}
+  .svc-track::-webkit-scrollbar{display:none}
+  .svc-card{position:relative;flex:0 0 auto;width:300px;height:400px;border-radius:var(--r-lg);overflow:hidden;scroll-snap-align:start;display:flex}
+  .svc-media{position:absolute;inset:0;display:grid;place-items:center}.svc-media svg{width:52%;height:52%}
+  .svc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.62) 0%,rgba(0,0,0,.12) 46%,transparent 72%)}
+  .svc-arrow{position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:var(--r-pill);background:var(--surface);color:var(--ink);display:grid;place-items:center;border:none;cursor:pointer;z-index:2;box-shadow:var(--shadow-sm)}
+  .svc-arrow:hover{background:var(--complement);color:#fff}
+  .svc-body{position:relative;margin-top:auto;padding:20px;z-index:1}
+  .svc-body h3{color:#fff;font-size:20px;margin-bottom:6px}.svc-body p{color:rgba(255,255,255,.85);font-size:14px}
+  .svc-controls{display:flex;align-items:center;justify-content:space-between;margin-top:24px}
+  .svc-nav{width:48px;height:48px;border-radius:var(--r-pill);border:1px solid var(--border);background:transparent;color:var(--ink);display:grid;place-items:center;cursor:pointer}
+  .svc-nav:hover{border-color:var(--primary);color:var(--primary600)}
+  .dots{display:flex;gap:8px;align-items:center}
+  .dot{width:7px;height:7px;border-radius:var(--r-pill);background:var(--ink);opacity:.3;border:none;padding:0;cursor:pointer}
+  .dot.active{width:10px;height:10px;opacity:1;background:var(--complement);box-shadow:0 0 0 3px var(--complement-tint)}
+
+  .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:160px;gap:16px}
+  .gitem{border-radius:var(--r-md);display:grid;place-items:center;overflow:hidden;border:1px solid var(--border)}
+  .gitem svg{width:72%;height:72%}
+  .gwide{grid-column:span 2;grid-row:span 2}.gwide svg{width:56%;height:56%}
+
+  .reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .review{display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+  .stars{color:var(--warm);letter-spacing:2px}
+  .reviewer{display:flex;align-items:center;gap:12px;margin-top:auto}
+  .avatar{width:40px;height:40px;border-radius:var(--r-pill);display:grid;place-items:center;color:#fff;font-family:var(--fh);font-weight:700}
+  .reviewer small{display:block;color:var(--muted);font-size:12px}
+
+  .faq{max-width:760px;display:flex;flex-direction:column;gap:12px}
+  .faq details{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:0 24px}
+  .faq summary{list-style:none;cursor:pointer;padding:16px 0;font-family:var(--fh);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";font-size:22px;color:var(--primary600)}
+  .faq details[open] summary::after{content:"\2212"}
+  .faq p{color:var(--muted);padding-bottom:16px;font-size:14px}
+
+  .final{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:56px;margin-block:64px;border-radius:32px;background:#454BA6;color:#fff}
+  .final h2{color:#fff;font-size:clamp(18px,2.2vw,28px);white-space:nowrap;margin:0 0 24px}
+  .final-logo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff}
+  .final-mark{width:140px;height:140px;border-radius:50%;border:3px solid rgba(255,255,255,.85);display:grid;place-items:center}
+  .final-wordmark{font-family:var(--fh);font-weight:700;font-size:32px;letter-spacing:.02em}
+  .faq-layout{display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
+  .faq-marks{position:relative;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+  .qmark{display:grid;place-items:center;border-radius:28px;color:#fff;font-family:var(--fh);font-weight:700;box-shadow:var(--shadow-md);flex:none}
+  .lead{display:flex;flex-direction:column;gap:16px}
+  .lead input{min-height:64px;padding:0 28px;border:none;border-radius:28px;background:#fff;font-family:var(--fb);font-size:17px;width:100%}
+  .lead-agree{display:flex;align-items:center;gap:12px;color:#fff;font-size:14px;cursor:pointer}
+  .lead-agree input{appearance:none;-webkit-appearance:none;min-height:0;width:24px;height:24px;padding:0;border:2px solid #fff;border-radius:50%;background:transparent;cursor:pointer;flex:none}
+  .lead-agree input:checked{background:#fff;box-shadow:inset 0 0 0 4px #454BA6}
+  .lead-submit{align-self:flex-start;min-height:60px;padding:0 44px;border:none;border-radius:var(--r-pill);background:var(--primary);color:#fff;font-family:var(--fh);font-weight:600;font-size:17px;cursor:pointer}
+  .lead-submit:hover{background:var(--primary600)}
+  .lead-msg{color:#FFD9D4;font-weight:700;font-size:14px}
+  @media (max-width:860px){.faq-layout{grid-template-columns:1fr}.faq-marks{min-height:140px}}
+  @media (max-width:760px){.final{grid-template-columns:1fr;padding:32px}.final h2{white-space:normal}}
+
+  footer{background:var(--ink);color:#d7d9e0}
+  .foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;padding-block:64px 24px}
+  footer h4{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+  footer ul{list-style:none;display:flex;flex-direction:column;gap:10px}footer a{color:#d7d9e0;font-size:14px}
+  .foot-bar{border-top:1px solid rgba(255,255,255,.12);padding-block:16px;font-size:13px;color:#aeb1bd}
+  .note{background:var(--complement-tint);color:var(--complement600);text-align:center;padding:10px;font-size:13px;font-weight:600}
+
+  @media (max-width:1024px){.adv-grid,.feat-grid,.gallery,.reviews{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}.foot{grid-template-columns:1fr 1fr}}
+  @media (max-width:600px){.adv-grid,.feat-grid,.reviews{grid-template-columns:1fr}.hero-grid{grid-template-columns:1fr}nav.main{display:none}.srow{grid-template-columns:120px 1fr 40px;gap:12px}.sname{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="note">Статичная демонстрация · реальная сборка — на Next.js 16 · структура из 10 блоков</div>
+
+<header><div class="container hdr">
+  <a class="logo" href="#"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2v2M14 8a2 2 0 0 1 4 0"/></svg>Happy&nbsp;Kids</a>
+  <nav class="main"><a href="#feat">Каталог</a><a href="#how">Как это работает</a><a href="#faq">Вопросы</a></nav>
+  <div class="hdr-right">
+    <div class="toggle"><button aria-pressed="true">RU</button><button aria-pressed="false">EN</button></div>
+    <div class="toggle"><button aria-pressed="true">₽</button><button aria-pressed="false">$</button></div>
+    <button class="icon-btn" aria-label="Поиск"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
+    <button class="icon-btn" aria-label="Корзина"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h2.2l2.3 12.4a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21 7H5.3"/></svg></button>
+  </div>
+</div></header>
+
+<section class="band"><div class="container hero"><div class="hero-grid">
+  <div>
+    <span class="eyebrow">Конструкторы для детей 8–12 лет</span>
+    <h1>Конструкторы, которые развивают <span class="accent">мышление через игру</span></h1>
+    <p class="sub">Наборы для детей от 8 до 12 лет. Развивают логику, внимание и инженерное мышление.</p>
+    <div class="hero-ctas"><a class="btn btn-primary" href="#feat">Выбрать конструктор</a></div>
+  </div>
+  <div class="hero-art" id="hero-art"></div>
+</div></div></section>
+
+<section class="container section">
+  <div class="sec-head"><h2>От коробки с деталями — к готовой модели</h2><p>Каждый набор — маленький инженерный проект: собери своими руками</p></div>
+  <div class="transform">
+    <div class="t-panel t-box"><div id="box-art"></div><span class="t-cap">Детали набора</span></div>
+    <div class="t-arrow" aria-hidden="true">
+      <svg class="t-arrow-svg" width="64" height="28" viewBox="0 0 64 28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14h54M44 5l12 9-12 9"/></svg>
+      <span class="t-arrow-label">сборка</span>
+    </div>
+    <div class="t-panel t-model"><div id="model-art"></div><span class="t-cap">Готовая модель — машинка</span></div>
+  </div>
+</section>
+
+<section class="container section" id="feat">
+  <div class="sec-head"><div class="row"><div><h2>Популярные наборы</h2><p>Что чаще всего выбирают наши покупатели</p></div><a class="link" href="#">Весь каталог →</a></div></div>
+  <div class="feat-grid" id="feat-grid"></div>
+</section>
+
+<section class="container section" id="how">
+  <div class="sec-head"><h2>Как это работает</h2><p>Три простых шага от коробки до собранной модели</p></div>
+  <div class="steps" id="steps"></div>
+</section>
+
+<section class="band"><div class="container section">
+  <div class="svc-head">
+    <h2 class="svc-title">Что развивается у ребёнка</h2>
+  </div>
+  <div class="svc-track" id="svc-track"></div>
+  <div class="svc-controls">
+    <button class="svc-nav" id="svc-prev" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg></button>
+    <div class="dots" id="svc-dots"></div>
+    <button class="svc-nav" id="svc-next" aria-label="Вперёд"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </div>
+</div></section>
+
+<section class="container section">
+  <div class="sec-head"><h2>Галерея готовых моделей</h2><p>Что получится собрать из наборов Happy Kids</p></div>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<section class="band"><div class="container section">
+  <div class="sec-head"><h2>Отзывы родителей</h2><p>Не про эмоции — про результат</p></div>
+  <div class="reviews" id="reviews"></div>
+</div></section>
+
+<section class="container section" id="faq">
+  <div class="sec-head"><h2>Частые вопросы</h2><p>Отвечаем на то, что обычно спрашивают родители</p></div>
+  <div class="faq-layout">
+    <div class="faq" id="faq-list"></div>
+    <div class="faq-marks" aria-hidden="true">
+      <span class="qmark" style="background:#2E7DF6;width:92px;height:92px;font-size:54px;transform:rotate(-8deg)">?</span>
+      <span class="qmark" style="background:#FF7A33;width:64px;height:64px;font-size:38px;transform:rotate(10deg)">?</span>
+      <span class="qmark" style="background:#FFC24D;width:76px;height:76px;font-size:46px;transform:rotate(-4deg);color:#4a3200">?</span>
+    </div>
+  </div>
+</section>
+
+<section class="container"><div class="final">
+  <div class="final-logo" aria-hidden="true">
+    <span class="final-mark"><svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 4 0v2M14 8a2 2 0 0 1 4 0"/></svg></span>
+    <span class="final-wordmark">Happy Kids</span>
+  </div>
+  <div class="final-form">
+    <h2>Заполните форму и мы вам перезвоним</h2>
+    <form class="lead" id="lead" novalidate>
+      <input id="lead-surname" aria-label="Фамилия" placeholder="Фамилия" autocomplete="family-name" />
+      <input id="lead-name" aria-label="Имя" placeholder="Имя" autocomplete="given-name" />
+      <input id="lead-phone" aria-label="Номер телефона" type="tel" inputmode="tel" placeholder="+7 (999) 999 - 99 - 99" autocomplete="tel" />
+      <label class="lead-agree"><input type="checkbox" id="lead-agree" /><span>Я соглашаюсь с политикой конфиденциальности</span></label>
+      <button class="lead-submit" type="submit">Оставить заявку</button>
+      <span class="lead-msg" id="lead-msg"></span>
+    </form>
+  </div>
+</div></section>
+
+<footer>
+  <div class="container foot">
+    <div>
+      <div class="logo" style="color:#fff;margin-bottom:12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2v2M14 8a2 2 0 0 1 4 0"/></svg>Happy&nbsp;Kids</div>
+      <p style="color:#aeb1bd;font-size:14px;max-width:34ch">Магазин развивающих конструкторов для детей. Собираем будущих инженеров — по одному кубику.</p>
+    </div>
+    <div><h4>Покупателю</h4><ul><li><a href="#">Доставка</a></li><li><a href="#">Оплата</a></li><li><a href="#">О бренде</a></li></ul></div>
+    <div><h4>Контакты</h4><ul><li><a href="tel:+78000000000">8 800 000-00-00</a></li><li><a href="mailto:hello@happykids.toys">hello@happykids.toys</a></li></ul></div>
+    <div><h4>Мы в соцсетях</h4><ul><li><a href="#">Telegram</a></li><li><a href="#">ВКонтакте</a></li></ul></div>
+  </div>
+  <div class="foot-bar"><div class="container">© 2026 Happy Kids. Все права защищены.</div></div>
+</footer>
+
+<script>
+  function blocksSVG(c){return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="62" width="36" height="26" rx="6" fill="${c}"/><rect x="62" y="62" width="36" height="26" rx="6" fill="#FFC24D"/><rect x="42" y="34" width="36" height="26" rx="6" fill="#fff" stroke="rgba(0,0,0,0.08)" stroke-width="1"/><rect x="29" y="64" width="9" height="5" rx="2.5" fill="#fff" opacity="0.9"/><rect x="43" y="64" width="9" height="5" rx="2.5" fill="#fff" opacity="0.9"/><rect x="69" y="64" width="9" height="5" rx="2.5" fill="rgba(0,0,0,0.16)"/><rect x="83" y="64" width="9" height="5" rx="2.5" fill="rgba(0,0,0,0.16)"/><rect x="49" y="36" width="9" height="5" rx="2.5" fill="${c}" opacity="0.85"/><rect x="63" y="36" width="9" height="5" rx="2.5" fill="${c}" opacity="0.85"/></svg>`;}
+  const S={space:"#2E7DF6",robo:"#FF7A33",city:"#22C55E",dino:"#A855F7",warm:"#FFC24D"};
+  // плоские залитые векторные иллюстрации (детская тематика)
+  function illus(name){
+    const A={
+      rocket:`<path d="M60 16c15 11 21 32 17 53H43c-4-21 2-42 17-53z" fill="#fff"/><circle cx="60" cy="48" r="10" fill="#2E7DF6"/><path d="M43 70 30 86l6-24z" fill="#FF7A33"/><path d="M77 70 90 86l-6-24z" fill="#FF7A33"/><path d="M50 90h20l-6 14c-2 5-6 5-8 0z" fill="#FFC24D"/>`,
+      robot:`<rect x="26" y="54" width="8" height="22" rx="4" fill="#fff"/><rect x="86" y="54" width="8" height="22" rx="4" fill="#fff"/><rect x="34" y="42" width="52" height="46" rx="12" fill="#fff"/><circle cx="50" cy="62" r="6" fill="#2E7DF6"/><circle cx="70" cy="62" r="6" fill="#2E7DF6"/><rect x="50" y="74" width="20" height="6" rx="3" fill="#FF7A33"/><rect x="56" y="24" width="8" height="14" rx="4" fill="#FF7A33"/><circle cx="60" cy="22" r="5" fill="#FFC24D"/>`,
+      car:`<path d="M22 76c0-6 5-11 11-11h4l8-12c2-3 5-4 8-4h16c5 0 9 3 11 7l4 9h3c6 0 11 5 11 11 0 3-2 5-5 5H27c-3 0-5-2-5-5z" fill="#fff"/><path d="M52 53h13l4 9H47z" fill="#2E7DF6"/><circle cx="42" cy="86" r="9" fill="#22252D"/><circle cx="42" cy="86" r="3" fill="#fff"/><circle cx="80" cy="86" r="9" fill="#22252D"/><circle cx="80" cy="86" r="3" fill="#fff"/>`,
+      dino:`<path d="M28 90c-1-28 16-48 40-48 6 0 11 2 11 2l9-10 1 14c5 6 7 15 7 24 0 7-5 12-12 12h-4l-3 8h-9l-1-8H52l-3 8h-9l-1-8h-8c-1 0-2-1-2-2z" fill="#22C55E"/><circle cx="76" cy="60" r="3.5" fill="#22252D"/><path d="M44 64l5-7 5 7 5-7 5 7z" fill="#16A34A"/>`,
+      castle:`<rect x="32" y="54" width="56" height="44" fill="#fff"/><rect x="24" y="44" width="14" height="54" fill="#fff"/><rect x="82" y="44" width="14" height="54" fill="#fff"/><g fill="#fff"><rect x="24" y="38" width="4" height="6"/><rect x="32" y="38" width="4" height="6"/><rect x="82" y="38" width="4" height="6"/><rect x="90" y="38" width="4" height="6"/><rect x="34" y="48" width="4" height="6"/><rect x="42" y="48" width="4" height="6"/><rect x="50" y="48" width="4" height="6"/><rect x="58" y="48" width="4" height="6"/><rect x="66" y="48" width="4" height="6"/><rect x="74" y="48" width="4" height="6"/></g><path d="M54 72h12v26H54z" fill="#FF7A33"/><rect x="40" y="64" width="9" height="9" rx="2" fill="#2E7DF6"/><rect x="71" y="64" width="9" height="9" rx="2" fill="#2E7DF6"/>`,
+      cog:`<g fill="#FF7A33"><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(0 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(45 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(90 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(135 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(180 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(225 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(270 60 60)"/><rect x="54" y="28" width="12" height="12" rx="2" transform="rotate(315 60 60)"/><circle cx="60" cy="60" r="22"/></g><circle cx="60" cy="60" r="9" fill="#fff"/>`,
+      lightbulb:`<path d="M60 28c-14 0-24 11-24 24 0 9 5 15 10 19v6h28v-6c5-4 10-10 10-19 0-13-10-24-24-24z" fill="#FFC24D"/><rect x="50" y="80" width="20" height="6" rx="3" fill="#fff"/><rect x="52" y="88" width="16" height="5" rx="2.5" fill="#fff"/>`,
+      target:`<circle cx="60" cy="60" r="30" fill="#2E7DF6"/><circle cx="60" cy="60" r="20" fill="#fff"/><circle cx="60" cy="60" r="11" fill="#FF7A33"/><circle cx="60" cy="60" r="4" fill="#fff"/>`,
+      star:`<path d="M60 26l9 21 23 2-17 15 5 23-20-12-20 12 5-23-17-15 23-2z" fill="#FFC24D"/>`,
+      abacus:`<rect x="30" y="32" width="60" height="56" rx="8" fill="#fff"/><rect x="36" y="46" width="48" height="3" rx="1.5" fill="#C9A079"/><circle cx="46" cy="47" r="6" fill="#2E7DF6"/><circle cx="60" cy="47" r="6" fill="#FF7A33"/><circle cx="74" cy="47" r="6" fill="#22C55E"/><rect x="36" y="62" width="48" height="3" rx="1.5" fill="#C9A079"/><circle cx="46" cy="63" r="6" fill="#FFC24D"/><circle cx="60" cy="63" r="6" fill="#2E7DF6"/><circle cx="74" cy="63" r="6" fill="#FF7A33"/><rect x="36" y="78" width="48" height="3" rx="1.5" fill="#C9A079"/><circle cx="46" cy="79" r="6" fill="#22C55E"/><circle cx="60" cy="79" r="6" fill="#FFC24D"/><circle cx="74" cy="79" r="6" fill="#2E7DF6"/>`,
+      puzzle:`<path d="M42 42h13a6 6 0 1 1 10 0h13v13a6 6 0 1 0 0 10v13H65a6 6 0 1 1-10 0H42V65a6 6 0 1 0 0-10z" fill="#A855F7"/>`,
+      tower:`<rect x="40" y="74" width="40" height="22" rx="6" fill="#2E7DF6"/><rect x="46" y="52" width="34" height="22" rx="6" fill="#FF7A33"/><rect x="50" y="30" width="28" height="22" rx="6" fill="#22C55E"/><circle cx="52" cy="74" r="3.5" fill="#fff"/><circle cx="64" cy="74" r="3.5" fill="#fff"/><circle cx="58" cy="52" r="3.5" fill="#fff"/><circle cx="70" cy="52" r="3.5" fill="#fff"/>`,
+      partsScatter:`<g transform="rotate(-14 44 50)"><rect x="26" y="42" width="36" height="16" rx="4" fill="#2E7DF6"/><rect x="32" y="38" width="8" height="5" rx="2.5" fill="#fff" opacity="0.9"/><rect x="44" y="38" width="8" height="5" rx="2.5" fill="#fff" opacity="0.9"/></g><g transform="rotate(16 84 36)"><rect x="68" y="28" width="30" height="15" rx="4" fill="#FF7A33"/><rect x="73" y="24" width="7" height="5" rx="2.5" fill="#fff" opacity="0.85"/><rect x="85" y="24" width="7" height="5" rx="2.5" fill="#fff" opacity="0.85"/></g><g transform="rotate(8 36 88)"><rect x="24" y="82" width="24" height="13" rx="4" fill="#FFC24D"/></g><g transform="rotate(-10 86 86)"><rect x="74" y="80" width="24" height="13" rx="4" fill="#22C55E"/></g><circle cx="58" cy="92" r="11" fill="#22252D"/><circle cx="58" cy="92" r="4" fill="#fff"/><circle cx="30" cy="30" r="9" fill="#22252D"/><circle cx="30" cy="30" r="3.5" fill="#fff"/><circle cx="92" cy="58" r="4" fill="#A855F7"/><circle cx="52" cy="22" r="3.5" fill="#2E7DF6"/>`,
+      carBuilt:`<circle cx="40" cy="84" r="13" fill="#22252D"/><circle cx="40" cy="84" r="4.5" fill="#fff"/><circle cx="84" cy="84" r="13" fill="#22252D"/><circle cx="84" cy="84" r="4.5" fill="#fff"/><rect x="18" y="58" width="88" height="22" rx="7" fill="#2E7DF6"/><rect x="40" y="40" width="42" height="22" rx="7" fill="#FF7A33"/><rect x="46" y="45" width="30" height="12" rx="3" fill="#DCEBFF"/><rect x="48" y="36" width="9" height="5" rx="2.5" fill="#FF7A33" opacity="0.85"/><rect x="65" y="36" width="9" height="5" rx="2.5" fill="#FF7A33" opacity="0.85"/><circle cx="103" cy="66" r="4" fill="#FFC24D"/>`,
+    };
+    return `<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">${A[name]||A.tower}</svg>`;
+  }
+  const ic=(p)=>`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+  document.getElementById('hero-art').innerHTML=`<picture style="display:block;width:100%;height:100%"><source srcset="hero-child.webp" type="image/webp"><img src="hero-child.jpg" alt="Ребёнок играет с деревянной пирамидкой Happy Kids" decoding="async" style="width:100%;height:100%;object-fit:cover"></picture>`;
+
+  // 2 · коробка с деталями → готовая модель
+  function boxSVG(){return `<svg viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M40 66 L100 46 L160 66 L100 80 Z" fill="#D9B388"/>
+    <rect x="44" y="66" width="112" height="92" rx="12" fill="#E7C9A6" stroke="rgba(0,0,0,.12)" stroke-width="1.5"/>
+    <ellipse cx="100" cy="68" rx="56" ry="12" fill="#C9A079"/>
+    <g stroke="rgba(0,0,0,0.12)" stroke-width="1.2" stroke-linejoin="round"><rect x="66" y="50" width="22" height="14" rx="3" fill="#2E7DF6"/><rect x="94" y="44" width="24" height="15" rx="3" fill="#FF7A33"/><rect x="116" y="52" width="18" height="12" rx="3" fill="#22C55E"/><circle cx="84" cy="42" r="5" fill="#A855F7"/><circle cx="128" cy="46" r="5" fill="#FFC24D"/></g>
+    <g stroke="rgba(0,0,0,0.12)" stroke-width="1.2" stroke-linejoin="round"><rect x="150" y="138" width="20" height="13" rx="3" fill="#FFC24D"/><circle cx="38" cy="146" r="6" fill="#2E7DF6"/></g></svg>`;}
+  document.getElementById('box-art').innerHTML=illus('partsScatter');
+  document.getElementById('model-art').innerHTML=illus('carBuilt');
+
+  const feat=[
+    ['Робототехника','от 8 лет','Подвижный робот: шестерни, моторчик и программируемые движения.','2 490 ₽','#FFE7D6','robot'],
+    ['Космическая станция','от 10 лет','Орбитальная станция с модулями и солнечными панелями.','2 990 ₽','#DCEBFF','rocket'],
+    ['Инженерный набор','от 10 лет','Рычаги, передачи и механизмы — как устроены настоящие машины.','2 690 ₽','#DCF7E3','cog'],
+    ['Архитектурный конструктор','от 9 лет','Башни и мосты — изучаем устойчивость конструкций.','2 290 ₽','#F1E3FF','castle'],
+  ];
+  document.getElementById('feat-grid').innerHTML=feat.map(f=>`<article class="feat"><div class="feat-media" style="background:${f[4]}">${illus(f[5])}</div><div class="feat-body"><span class="age">${f[1]}</span><div class="feat-title">${f[0]}</div><p class="feat-desc">${f[2]}</p><div class="feat-foot"><span class="price">${f[3]}</span><a class="btn btn-primary btn-sm" href="#">Подробнее</a></div></div></article>`).join('');
+
+  const steps=[[1,'Выбираем набор','По возрасту и интересам ребёнка — фильтры помогут определиться.'],[2,'Собираем модель','По понятной иллюстрированной инструкции, шаг за шагом.'],[3,'Изучаем механики','Узнаём, как работают шестерни, рычаги и конструкции.']];
+  document.getElementById('steps').innerHTML=steps.map(s=>`<div class="step"><span class="step-no">${s[0]}</span><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join('');
+
+  // 5 · Что развивается — карусель карточек
+  const arrowUR=`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>`;
+  const skills=[
+    ['Логика','Последовательность шагов и причинно-следственные связи.','lightbulb','#2E7DF6'],
+    ['Концентрация','Долгая сборка без экрана тренирует внимание.','target','#FF7A33'],
+    ['Воображение','Ребёнок придумывает и строит свои конструкции.','star','#22C55E'],
+    ['Математическое мышление','Счёт деталей, симметрия и пропорции в моделях.','abacus','#A855F7'],
+    ['Решение задач','Если деталь не подходит — ищем решение.','puzzle','#2E7DF6'],
+    ['Моторика','Точные движения пальцев при сборке мелких деталей.','tower','#FF7A33'],
+  ];
+  const track=document.getElementById('svc-track');
+  track.innerHTML=skills.map(s=>`<article class="svc-card" style="background:${s[3]}22"><div class="svc-media">${illus(s[2])}</div><div class="svc-overlay"></div><button class="svc-arrow" aria-label="Подробнее: ${s[0]}">${arrowUR}</button><div class="svc-body"><h3>${s[0]}</h3><p>${s[1]}</p></div></article>`).join('');
+  const PAGES=2; // слайдер листается двумя страницами
+  const dotsBox=document.getElementById('svc-dots');
+  dotsBox.innerHTML=Array.from({length:PAGES}).map((_,i)=>`<button class="dot${i===0?' active':''}" data-i="${i}" aria-label="Страница ${i+1}"></button>`).join('');
+  const maxScroll=()=>track.scrollWidth-track.clientWidth;
+  const go=(i)=>{const n=Math.max(0,Math.min(i,PAGES-1));track.scrollTo({left:maxScroll()*(n/(PAGES-1)),behavior:'smooth'});};
+  let active=0;
+  track.addEventListener('scroll',()=>{const m=maxScroll();active=m>0?Math.round(track.scrollLeft/m*(PAGES-1)):0;[...dotsBox.children].forEach((d,i)=>d.classList.toggle('active',i===active));});
+  document.getElementById('svc-prev').onclick=()=>go(active-1);
+  document.getElementById('svc-next').onclick=()=>go(active+1);
+  dotsBox.querySelectorAll('.dot').forEach(d=>d.onclick=()=>go(+d.dataset.i));
+
+  // 9 · форма заявки
+  document.getElementById('lead').addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const surname=document.getElementById('lead-surname').value.trim();
+    const name=document.getElementById('lead-name').value.trim();
+    const phone=document.getElementById('lead-phone').value.trim();
+    const msg=document.getElementById('lead-msg');
+    const agree=document.getElementById('lead-agree').checked;
+    if(!surname){msg.textContent='Укажите фамилию.';return;}
+    if(!name){msg.textContent='Укажите имя.';return;}
+    if(!/^[+\d][\d\s()-]{9,}$/.test(phone)){msg.textContent='Укажите корректный номер телефона.';return;}
+    if(!agree){msg.textContent='Нужно согласие с политикой конфиденциальности.';return;}
+    document.getElementById('lead').innerHTML='<span class="lead-msg" style="color:var(--ink);font-size:18px">Заявка принята! Мы перезвоним в ближайшее время.</span>';
+  });
+
+  const gal=[[S.space,true,'rocket'],[S.robo,false,'robot'],[S.city,false,'car'],[S.dino,false,'dino'],[S.warm,false,'castle']];
+  document.getElementById('gallery').innerHTML=gal.map(g=>`<div class="gitem${g[1]?' gwide':''}" style="background:${g[0]}22">${illus(g[2])}</div>`).join('');
+
+  const rev=[
+    ['Сын стал проводить меньше времени в телефоне и больше интересоваться техникой. Собирает почти каждый вечер.','Анна','мама Миши, 9 лет',S.robo,'А'],
+    ['Дочка сама разобралась с инструкцией и теперь придумывает свои конструкции. Видно, как растёт усидчивость.','Игорь','папа Сони, 11 лет',S.space,'И'],
+    ['Брали инженерный набор — отличный повод поговорить о том, как устроены машины. Качество деталей на уровне.','Елена','мама Артёма, 10 лет',S.city,'Е'],
+  ];
+  document.getElementById('reviews').innerHTML=rev.map(r=>`<div class="review"><div class="stars">★★★★★</div><p>«${r[0]}»</p><div class="reviewer"><span class="avatar" style="background:${r[3]}">${r[4]}</span><span><strong>${r[1]}</strong><small>${r[2]}</small></span></div></div>`).join('');
+
+  const faq=[['С какого возраста подойдёт?','Наборы рассчитаны на детей 8–12 лет. На каждой карточке указан рекомендуемый возраст «от».'],['Сложно ли собирать?','Нет. К каждому набору идёт пошаговая иллюстрированная инструкция, а сложность указана в каталоге.'],['Есть ли инструкции?','Да, бумажная иллюстрированная инструкция в коробке. Сборка рассчитана так, чтобы ребёнок справился сам.'],['Безопасны ли материалы?','Используем сертифицированный пластик без вредных примесей, детали с гладкими краями.']];
+  document.getElementById('faq-list').innerHTML=faq.map(f=>`<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('');
+</script>
+</body>
+</html>

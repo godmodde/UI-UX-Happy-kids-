@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ui-ux-pro-max skill data/scripts (~2MB, restored from upstream repo, not app code)
+/src/ui-ux-pro-max/
+__pycache__/
+
+# local agent tooling (not part of the app)
+.claude/
+skills-lock.json
