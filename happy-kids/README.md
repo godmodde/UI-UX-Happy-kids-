@@ -29,6 +29,31 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Deploy to GitHub Pages
+
+The project is configured for static export (`output: 'export'` in `next.config.ts`)
+and ships a workflow at [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)
+(repo root) that builds `happy-kids/out` and publishes it to GitHub Pages.
+
+One-time setup in the GitHub repository:
+
+1. **Settings → Pages → Source → "GitHub Actions"**.
+2. Push to `main` — the workflow builds and deploys automatically.
+
+Notes:
+
+- `basePath` is set from the repo name via `NEXT_PUBLIC_BASE_PATH` in CI, so the site
+  works under `https://<user>.github.io/<repo>/`. Locally the var is empty (site at `/`).
+- Images use `unoptimized: true` (Pages has no image optimizer); local `public/` assets
+  are prefixed with `basePath` via `src/app/_lib/asset.ts`.
+- Catalog filtering runs client-side (from the URL) so it works on static hosting.
+
+Build the static site manually:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/<repo-name> pnpm build   # output in ./out
+```
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

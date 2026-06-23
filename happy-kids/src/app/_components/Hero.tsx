@@ -5,6 +5,7 @@ import Image from "next/image";
 import styles from "../ui.module.css";
 import { BrickIcon } from "./icons";
 import { useT } from "./settings-context";
+import { asset } from "../_lib/asset";
 
 /* Hero-блок — клиентский, текст переключается по языку. */
 export function Hero() {
@@ -29,7 +30,7 @@ export function Hero() {
           </div>
           <div className={styles.heroArt}>
             <Image
-              src="/hero-child.jpg"
+              src={asset("/hero-child.jpg")}
               alt={t("hero.alt")}
               fill
               sizes="(max-width: 768px) 90vw, 540px"

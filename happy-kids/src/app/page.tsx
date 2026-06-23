@@ -10,6 +10,7 @@ import { Price } from "./_components/Price";
 import { SkillsCarousel } from "./_components/SkillsCarousel";
 import { LeadForm } from "./_components/LeadForm";
 import { useT } from "./_components/settings-context";
+import { asset } from "./_lib/asset";
 
 /* Happy Kids — Home v2 (лендинг). Текст переключается по языку. */
 
@@ -56,7 +57,7 @@ export default function Home() {
         </div>
         <div className={styles.transform}>
           <div className={`${styles.tPanel} ${styles.tPanelBox}`}>
-            <Image src="/toy-parts.jpg" alt={t("tr.cap1")} fill sizes="(max-width: 760px) 90vw, 460px" style={{ objectFit: "cover" }} />
+            <Image src={asset("/toy-parts.jpg")} alt={t("tr.cap1")} fill sizes="(max-width: 760px) 90vw, 460px" style={{ objectFit: "cover" }} />
             <span className={styles.tCaption}>{t("tr.cap1")}</span>
           </div>
           <div className={styles.tArrow} aria-hidden="true">
@@ -66,7 +67,7 @@ export default function Home() {
             <span className={styles.tArrowLabel}>{t("tr.arrow")}</span>
           </div>
           <div className={`${styles.tPanel} ${styles.tPanelModel}`}>
-            <Image src="/toy-built.jpg" alt={t("tr.cap2")} fill sizes="(max-width: 760px) 90vw, 460px" style={{ objectFit: "cover" }} />
+            <Image src={asset("/toy-built.jpg")} alt={t("tr.cap2")} fill sizes="(max-width: 760px) 90vw, 460px" style={{ objectFit: "cover" }} />
             <span className={styles.tCaption}>{t("tr.cap2")}</span>
           </div>
         </div>
@@ -160,7 +161,7 @@ export default function Home() {
                 <div className={styles.stars} aria-label="5 / 5">★★★★★</div>
                 <p>«{t(`rev.${r.k}.text`)}»</p>
                 <div className={styles.reviewer}>
-                  <Image src={r.img} alt={r.name} width={40} height={40} className={styles.avatar} />
+                  <Image src={asset(r.img)} alt={r.name} width={40} height={40} className={styles.avatar} />
                   <span>
                     <strong>{r.name}</strong>
                     <small>{t(`rev.${r.k}.role`)}</small>
