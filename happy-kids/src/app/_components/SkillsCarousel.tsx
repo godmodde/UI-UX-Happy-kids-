@@ -30,6 +30,7 @@ function ArrowUpRight() {
 export function SkillsCarousel() {
   const t = useT();
   const trackRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
   const [active, setActive] = useState(0);
   const [info, setInfo] = useState<Item | null>(null);
 
@@ -83,7 +84,38 @@ export function SkillsCarousel() {
     setActive(best);
   }
 
+  // Перетаскивание мышью (как свайп на телефоне). Только для мыши —
+  // тач/перо листаются нативно. На время перетаскивания отключаем snap,
+  // чтобы движение было плавным, а по отпусканию — доводим к ближайшей карточке.
+  function onPointerDown(e: React.PointerEvent) {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    const track = trackRef.current;
+    if (!track) return;
+    drag.current = { down: true, startX: e.clientX, startLeft: track.scrollLeft, moved: false };
+    track.style.scrollSnapType = "none";
+  }
+  function onPointerMove(e: React.PointerEvent) {
+    const track = trackRef.current;
+    const d = drag.current;
+    if (!track || !d.down) return;
+    const dx = e.clientX - d.startX;
+    if (Math.abs(dx) > 4) {
+      d.moved = true;
+      track.setPointerCapture?.(e.pointerId);
+    }
+    track.scrollLeft = d.startLeft - dx;
+  }
+  function endDrag() {
+    const track = trackRef.current;
+    const d = drag.current;
+    if (!d.down) return;
+    d.down = false;
+    if (track) track.style.scrollSnapType = "";
+    if (d.moved) scrollToIndex(active); // плавно довести к ближайшей карточке
+  }
+
   function showInfo(it: Item) {
+    if (drag.current.moved) return; // не открывать пуш, если это было перетаскивание
     setInfo(it);
   }
   function closeInfo() {
@@ -99,7 +131,16 @@ export function SkillsCarousel() {
         </div>
 
         {/* Карусель */}
-        <div className={styles.svcTrack} ref={trackRef} onScroll={onScroll}>
+        <div
+          className={styles.svcTrack}
+          ref={trackRef}
+          onScroll={onScroll}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={endDrag}
+        >
           {items.map((it) => {
             const name = t(`sk.${it.key}.name`);
             return (
