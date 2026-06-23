@@ -1522,7 +1522,8 @@
 
 .svcControls { display:flex; align-items:center; justify-content:space-between; margin-top:24px; }
 .svcNav { width:48px; height:48px; border-radius:var(--r-pill); border:1px solid var(--color-border); background:transparent; color:var(--color-ink); display:grid; place-items:center; cursor:pointer; transition:.15s; }
-.svcNav:hover { border-color:var(--color-primary); color:var(--color-primary-600); }
+.svcNav:hover:not(:disabled) { border-color:var(--color-primary); color:var(--color-primary-600); }
+.svcNav:disabled { opacity:.35; cursor:default; }
 /* Заполняющаяся полоска прогресса прокрутки между стрелками */
 .svcBar { flex:1; height:6px; margin:0 16px; border-radius:var(--r-pill); background:var(--color-border); overflow:hidden; }
 .svcBarFill { display:block; height:100%; min-width:3px; background:var(--color-primary); border-radius:inherit; }

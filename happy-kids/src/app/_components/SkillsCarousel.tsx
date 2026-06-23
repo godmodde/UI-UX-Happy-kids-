@@ -33,6 +33,8 @@ export function SkillsCarousel() {
   const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false, lastX: 0, lastT: 0, vel: 0 });
   const rafRef = useRef(0); // id анимации инерции
   const [progress, setProgress] = useState(0); // заполнение полоски прогресса, 0..1
+  const [atStart, setAtStart] = useState(true); // в начале — стрелка «Назад» disabled
+  const [atEnd, setAtEnd] = useState(false); // в конце — стрелка «Вперёд» disabled
   const [info, setInfo] = useState<Item | null>(null);
 
   // Пуш закрывается при скролле или нажатии Esc (клик закрывает по onClick).
@@ -50,8 +52,11 @@ export function SkillsCarousel() {
     };
   }, [info]);
 
-  // Остановить инерцию при размонтировании.
-  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
+  // Инициализировать края/полоску по факту раскладки; остановить инерцию при размонтировании.
+  useEffect(() => {
+    onScroll();
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
 
   function cards(): HTMLElement[] {
     const track = trackRef.current;
@@ -108,12 +113,14 @@ export function SkillsCarousel() {
     rafRef.current = requestAnimationFrame(tick);
   }
 
-  // Полоска прогресса = доля прокрутки.
+  // Полоска прогресса = доля прокрутки; заодно определяем края для disabled стрелок.
   function onScroll() {
     const track = trackRef.current;
     if (!track) return;
     const max = track.scrollWidth - track.clientWidth;
     setProgress(max > 0 ? Math.min(1, Math.max(0, track.scrollLeft / max)) : 0);
+    setAtStart(track.scrollLeft <= 1);
+    setAtEnd(max <= 0 || track.scrollLeft >= max - 1);
   }
 
   // Перетаскивание мышью (как свайп на телефоне). Только для мыши —
@@ -206,7 +213,7 @@ export function SkillsCarousel() {
 
         {/* Управление: стрелки + заполняющаяся полоска прогресса */}
         <div className={styles.svcControls}>
-          <button type="button" className={styles.svcNav} onClick={() => step(-1)} aria-label="Назад">
+          <button type="button" className={styles.svcNav} onClick={() => step(-1)} disabled={atStart} aria-label="Назад">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
           <div
@@ -219,7 +226,7 @@ export function SkillsCarousel() {
           >
             <span className={styles.svcBarFill} style={{ width: `${progress * 100}%` }} />
           </div>
-          <button type="button" className={styles.svcNav} onClick={() => step(1)} aria-label="Вперёд">
+          <button type="button" className={styles.svcNav} onClick={() => step(1)} disabled={atEnd} aria-label="Вперёд">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         </div>
