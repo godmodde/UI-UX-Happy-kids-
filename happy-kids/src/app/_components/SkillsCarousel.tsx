@@ -106,7 +106,10 @@ export function SkillsCarousel() {
     const track = trackRef.current;
     if (!track) return;
     drag.current = { down: true, startX: e.clientX, startLeft: track.scrollLeft, moved: false };
+    // Во время drag — никаких анимаций: snap и smooth-scroll выключаем, чтобы
+    // дорожка следовала за курсором 1:1, без рывков-«догонялок».
     track.style.scrollSnapType = "none";
+    track.style.scrollBehavior = "auto";
   }
   function onPointerMove(e: React.PointerEvent) {
     const track = trackRef.current;
@@ -128,7 +131,10 @@ export function SkillsCarousel() {
     const d = drag.current;
     if (!d.down) return;
     d.down = false;
-    if (track) track.style.scrollSnapType = "";
+    if (track) {
+      track.style.scrollSnapType = "";
+      track.style.scrollBehavior = ""; // вернуть плавность для стрелок/снапа
+    }
     if (d.moved) snapNearest(); // плавно довести к ближайшей карточке
   }
 
