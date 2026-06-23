@@ -1,6 +1,6 @@
+# pnpm 11 требует явного решения по build-скриптам зависимостей.
+# Для статического экспорта нативная сборка не нужна (next/image unoptimized),
+# поэтому отключаем — это снимает ERR_PNPM_IGNORED_BUILDS в CI.
 allowBuilds:
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+  sharp: false
+  unrs-resolver: false
