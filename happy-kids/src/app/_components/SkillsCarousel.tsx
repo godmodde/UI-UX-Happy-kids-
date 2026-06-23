@@ -31,7 +31,7 @@ export function SkillsCarousel() {
   const t = useT();
   const trackRef = useRef<HTMLDivElement>(null);
   const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
-  const [active, setActive] = useState(0);
+  const [progress, setProgress] = useState(0); // заполнение полоски прогресса, 0..1
   const [info, setInfo] = useState<Item | null>(null);
 
   // Пуш закрывается при скролле или нажатии Esc (клик закрывает по onClick).
@@ -55,33 +55,47 @@ export function SkillsCarousel() {
     return Array.from(track.children) as HTMLElement[];
   }
 
-  // Плавно листаем по одной карточке: выравниваем её левый край с краем дорожки.
-  function scrollToIndex(i: number) {
+  function smooth() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  }
+
+  // Шаг ровно на одну карточку (ширина карточки + отступ между ними).
+  function step(dir: number) {
     const track = trackRef.current;
     const cs = cards();
     if (!track || cs.length === 0) return;
-    const n = Math.max(0, Math.min(i, cs.length - 1));
-    const delta = cs[n].getBoundingClientRect().left - track.getBoundingClientRect().left;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    track.scrollTo({ left: track.scrollLeft + delta, behavior: reduce ? "auto" : "smooth" });
+    const stride =
+      cs.length > 1
+        ? cs[1].getBoundingClientRect().left - cs[0].getBoundingClientRect().left
+        : cs[0].getBoundingClientRect().width;
+    track.scrollBy({ left: dir * stride, behavior: smooth() as ScrollBehavior });
   }
 
-  // Активна карточка, чей левый край ближе всего к левому краю дорожки.
-  function onScroll() {
+  // По отпусканию драга доводим к ближайшей карточке.
+  function snapNearest() {
     const track = trackRef.current;
     const cs = cards();
     if (!track || cs.length === 0) return;
     const left = track.getBoundingClientRect().left;
-    let best = 0;
+    let best = cs[0];
     let bestDist = Infinity;
-    cs.forEach((c, i) => {
+    for (const c of cs) {
       const d = Math.abs(c.getBoundingClientRect().left - left);
       if (d < bestDist) {
         bestDist = d;
-        best = i;
+        best = c;
       }
-    });
-    setActive(best);
+    }
+    const delta = best.getBoundingClientRect().left - left;
+    track.scrollBy({ left: delta, behavior: smooth() as ScrollBehavior });
+  }
+
+  // Полоска прогресса = доля прокрутки.
+  function onScroll() {
+    const track = trackRef.current;
+    if (!track) return;
+    const max = track.scrollWidth - track.clientWidth;
+    setProgress(max > 0 ? Math.min(1, Math.max(0, track.scrollLeft / max)) : 0);
   }
 
   // Перетаскивание мышью (как свайп на телефоне). Только для мыши —
@@ -115,7 +129,7 @@ export function SkillsCarousel() {
     if (!d.down) return;
     d.down = false;
     if (track) track.style.scrollSnapType = "";
-    if (d.moved) scrollToIndex(active); // плавно довести к ближайшей карточке
+    if (d.moved) snapNearest(); // плавно довести к ближайшей карточке
   }
 
   function showInfo(it: Item) {
@@ -163,17 +177,22 @@ export function SkillsCarousel() {
           })}
         </div>
 
-        {/* Управление: стрелки + точки */}
+        {/* Управление: стрелки + заполняющаяся полоска прогресса */}
         <div className={styles.svcControls}>
-          <button type="button" className={styles.svcNav} onClick={() => scrollToIndex(active - 1)} aria-label="Назад">
+          <button type="button" className={styles.svcNav} onClick={() => step(-1)} aria-label="Назад">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M11 18l-6-6 6-6" /></svg>
           </button>
-          <div className={styles.dots} aria-label="Страницы">
-            {items.map((it, i) => (
-              <button key={it.key} type="button" className={`${styles.dot} ${i === active ? styles.dotActive : ""}`} onClick={() => scrollToIndex(i)} aria-label={`Карточка ${i + 1}`} aria-current={i === active} />
-            ))}
+          <div
+            className={styles.svcBar}
+            role="progressbar"
+            aria-label="Прокрутка карусели"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress * 100)}
+          >
+            <span className={styles.svcBarFill} style={{ width: `${Math.max(8, progress * 100)}%` }} />
           </div>
-          <button type="button" className={styles.svcNav} onClick={() => scrollToIndex(active + 1)} aria-label="Вперёд">
+          <button type="button" className={styles.svcNav} onClick={() => step(1)} aria-label="Вперёд">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         </div>
